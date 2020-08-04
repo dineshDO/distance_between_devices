@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_blue/flutter_blue.dart';
 
 void main() {
   runApp(MyApp());
@@ -53,6 +54,24 @@ class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
 
   void _incrementCounter() {
+
+    FlutterBlue flutterBlue = FlutterBlue.instance;
+
+    flutterBlue.isAvailable.then((value) {
+      if(value){
+        flutterBlue.startScan(timeout: Duration(seconds: 4));
+        flutterBlue.scanResults.listen((event) {
+          for (ScanResult r in event) {
+            print(" ${r.device.name} found! rssi: ${r.rssi}");
+          }
+        });
+
+        flutterBlue.stopScan();
+      } else{
+        print("bluetooth not available");
+      }
+    });
+
     setState(() {
       // This call to setState tells the Flutter framework that something has
       // changed in this State, which causes it to rerun the build method below
